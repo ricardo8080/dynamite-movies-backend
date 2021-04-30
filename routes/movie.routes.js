@@ -1,9 +1,10 @@
-const express = require('express')
-const router = express.Router()
-const MovieCtrl = require('../controllers/movie.controller')
+const express = require('express');
+const router = express.Router();
+const MovieCtrl = require('../controllers/movie.controller');
 
-router.get('/Main-Page/Last-Seen', PersonCtrl.getLastSeenMovies)
-router.get('/Main-Page/Trends', PersonCtrl.getMovieTrends)
-router.get('/Search-Results/Simple-Search', PersonCtrl.getSearchMovieList)
-router.get('/Search-Results/Filter', PersonCtrl.getSearchFliteredMovieList)
-module.exports = router
+router.get('/Trends', MovieCtrl.getMovieTrends);
+router.post('/Search-Results/Simple-Search', MovieCtrl.getSearchMovieList);
+router.post('/Search-Results/Filter', MovieCtrl.getSearchFliteredMovieList);
+router.put('/Add-Movie-Search', MovieCtrl.addMovieSearchCount);
+
+module.exports = router;
