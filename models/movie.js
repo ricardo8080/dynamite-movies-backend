@@ -6,10 +6,10 @@ const movieSchema = new Schema({
     releaseDate:{type: Date, require :true},
     country:{type: String},
     description:{type: String, require :true},
-    gender:{type: [String], require :true},
+    genres:{type: [String], require :true},
     ageRestriction:{type: Number},
     principalImage:{type: String, require :true},
-    searchedTimes:{type: Number},
+    searchedTimes:{type: Number, require :true},
     listOfPictures:{type: [String]}
 });
 

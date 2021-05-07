@@ -2,53 +2,60 @@ const AccountCtrl = {};
 const Account = require('../models/account');
 
 AccountCtrl.getAccounts = async (req,res) => {
+    //console.log(req.header('username') + typeof (req.header('username')) );
     const Accounts = await Account.find();
-    //console.log(Accounts);
     res.json(Accounts);
 };
-
 AccountCtrl.isAccountExistent = async (req,res) => {
-    const Accounts = await Account.find({ "username" : req.body.username});
-    if (Accounts.length > 0)
+    const SearchedAccount = await Account.find(
+        { "username": req.header('username') });
+    if (SearchedAccount.length > 0)
     {   
-        res.json({"response":True});
+        res.json({ "response" : "True" });
     } 
     else {   
-        res.json({"response":False});
+        res.json({ "response" : "False" });
     }
 };
-
-AccountCtrl.isAccountDataCorrect = async (req,res) => {
-    let Accounts = await Account.find({ "username" : req.body.username, "password": req.body.password});
-    if (Accounts.length == 0)
+AccountCtrl.isAccountDataCorrect = async (req,res,next) => {
+    const loggedAccount = await Account.find( 
+        { "username" : req.header('username') ,
+          "password": req.header('password') }); //temporal way to pass password
+    if (loggedAccount.length == 0)
     {   
-        Accounts = await Account.find({ "username" : req.body.username});
-        if(Accounts.length == 0) {
-            res.json({ "response": False,
-                       "reason" :"Wrong username"});
-        } else {
-            res.json({ "response": False,
-                       "reason" :"Wrong password"});
-        }
+        next();
     } else {
-        res.json({ "response": True });
+        res.json({ "response" : "True" });
     }
 };
-
+AccountCtrl.checkWhichDataIsWrong = async (req,res) => {
+    const failAccountLogin = await Account.find({ "username" : req.header('username')});
+    if(failAccountLogin.length == 0) {
+        res.json({ "response" : "False" ,
+                    "reason" : "Wrong username" });
+    } else {
+        res.json({ "response" : "False" ,
+                    "reason" :"Wrong password" });
+    }
+};
 AccountCtrl.getLastSeenMovies = async (req,res) => {
-    const Accounts = await Account.find({ "username" : req.body.username });
-    console.log(Accounts.lastMoviesSeenList);
-    res.json(Accounts.lastMoviesSeenList);
+    const loggedAccount = await Account.find({ "username" : req.header('username') });
+    console.log(loggedAccount.lastMoviesSeenList);
+    if (loggedAccount.lastMoviesSeenList === null || 
+        typeof loggedAccount.lastMoviesSeenList === 'undefined')
+    {
+        res.json(["None"])
+    } else {
+        res.json(loggedAccount.lastMoviesSeenList);
+    }
 };
 
 AccountCtrl.createAccount = async (req,res) => {
-    //console.log("Body:");
-    //console.log(req.body);
     const username = req.body.username;
     const password = req.body.password;
-    const birthday = req.body.Birthday;
-    const age = req.body.Age;
-    const city = req.body.City;
+    const birthday = req.body.birthday;
+    const age = req.body.age;
+    const city = req.body.city;
     const countryResidence = req.body.countryResidence;
     const gender = req.body.gender;
     const accountPicture = req.body.accountPicture;
@@ -64,37 +71,38 @@ AccountCtrl.createAccount = async (req,res) => {
         accountPicture ,
         lastMoviesSeenList
     });
+    console.log(AccountObj);
     try {
         await AccountObj.save();
-        res.json({"response":"Succesful account Creation"});
+        res.json({ "response" : "Succesful account Creation" });
     } catch (error) {
-        res.json({"error: ": error});
+        res.json({ "error: " : error});
     }
 };
 
 AccountCtrl.changePassword = async (req, res) =>{
     await Account.findOneAndUpdate(
           { "username" : req.body.username }
-        , { "password":  req.body.password }
+        , { "password" :  req.body.password }
         )
         .then( () => {
-            res.json({"response":"Succesfully changed Password"});
+            res.json({ "response" : "Succesfully changed Password" });
         })
         .catch( () => {
-            res.json({"response":error});
+            res.json({ "response" : error});
         });
 };
 
 AccountCtrl.changeMoviesSeen = async (req, res) =>{
     await Account.findOneAndUpdate ( 
           { "username" : req.body.username }
-         ,{ "lastMoviesSeenList": req.body.lastMoviesSeenList }
+         ,{ "lastMoviesSeenList" : req.body.lastMoviesSeenList }
          )
       .then( () => {
-        res.json({"response":"Succesfully changed movies seen"});
+        res.json({ "response" : "Succesfully changed movies seen" });
       })
       .catch( () => {
-        res.json({"response":error});
+        res.json({ "esponse" : error });
       });
 };
 
