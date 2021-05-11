@@ -4,7 +4,7 @@ const AccountCtrl = require('../controllers/account.controllers');
 
 router.get('/Accounts', AccountCtrl.getAccounts); //For Testing Purposes, Must erase before launch
 router.get('/Check-Account-Existence', AccountCtrl.isAccountExistent);
-router.get('/Sign-In', AccountCtrl.isAccountDataCorrect, 
+router.get('/Sign-In', AccountCtrl.isSignInAllowed, 
                         AccountCtrl.checkWhichDataIsWrong);
 router.get('/Last-Seen', AccountCtrl.getLastSeenMovies);
 router.post('/Register', AccountCtrl.createAccount);

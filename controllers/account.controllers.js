@@ -17,7 +17,8 @@ AccountCtrl.isAccountExistent = async (req,res) => {
         res.json({ "response" : "False" });
     }
 };
-AccountCtrl.isAccountDataCorrect = async (req,res,next) => {
+
+AccountCtrl.isSignInAllowed = async (req,res,next) => {
     const loggedAccount = await Account.find( 
         { "username" : req.header('username') ,
           "password": req.header('password') }); //temporal way to pass password
@@ -25,7 +26,9 @@ AccountCtrl.isAccountDataCorrect = async (req,res,next) => {
     {   
         next();
     } else {
-        res.json({ "response" : "True" });
+        res.json({ "response" : "True" },
+                 {"Account": loggedAccount}
+                 );
     }
 };
 AccountCtrl.checkWhichDataIsWrong = async (req,res) => {
@@ -50,6 +53,9 @@ AccountCtrl.getLastSeenMovies = async (req,res) => {
     }
 };
 
+AccountCtrl.isAccountAlreadyUsed = async (req,res,next) => {
+};
+
 AccountCtrl.createAccount = async (req,res) => {
     const username = req.body.username;
     const password = req.body.password;
@@ -60,6 +66,8 @@ AccountCtrl.createAccount = async (req,res) => {
     const gender = req.body.gender;
     const accountPicture = req.body.accountPicture;
     const lastMoviesSeenList = null;
+    const securityQuestion = req.body.securityQuestion;
+    const securityAnswer = req.body.securityAnswer;
 
     const AccountObj = new Account ({  username ,
         password ,
@@ -69,23 +77,39 @@ AccountCtrl.createAccount = async (req,res) => {
         countryResidence ,
         gender ,
         accountPicture ,
-        lastMoviesSeenList
+        lastMoviesSeenList,
+        securityQuestion,
+        securityAnswer
     });
-    console.log(AccountObj);
-    try {
-        await AccountObj.save();
-        res.json({ "response" : "Succesful account Creation" });
-    } catch (error) {
-        res.json({ "error: " : error});
+    const SearchedAccount = await Account
+                            .find({ "username": req.header('username') });
+    console.log(SearchedAccount);
+    if (SearchedAccount.length > 0)
+    {   
+        res.json({ "response" : "Already Existent Account" });
+    } 
+    else {   
+        
+        try {
+            await AccountObj.save();
+            res.json({ "response" : "Succesful account Creation" });
+        } catch (error) {
+            res.json({ "error: " : error});
+        }
     }
 };
-
 AccountCtrl.changePassword = async (req, res) =>{
+    
     await Account.findOneAndUpdate(
-          { "username" : req.body.username }
-        , { "password" :  req.body.password }
+          { "username" : req.body.username,
+            "securityQuestion" : req.body.securityQuestion ,
+            "securityAnswer" : req.body.securityAnswer }
+        , { "password" :  req.body.newPassword }
         )
         .then( () => {
+            console.log({ "username" : req.body.username,
+            "securityQuestion" : req.body.securityQuestion ,
+            "securityAnswer" : req.body.securityAnswer });
             res.json({ "response" : "Succesfully changed Password" });
         })
         .catch( () => {
