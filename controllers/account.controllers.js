@@ -70,20 +70,18 @@ AccountCtrl.createAccount = async (req,res) => {
         securityQuestion,
         securityAnswer
     });
+    console.log(AccountObj);
     const SearchedAccount = await Account.find({ "username": username });
     if (SearchedAccount.length > 0)
     {   
         res.json({ "response" : "Already Existent Account" });
-    } 
-    else if (areAllValuesRight(req)){   
+    } else {
         try {
             await AccountObj.save();
             res.json({ "response" : "Succesful account Creation" });
         } catch (error) {
             res.json({ "error: " : error});
         }
-    } else {
-        res.json({ "error: " : "Age must be >13 <150, or missing data"});
     }
 };
 AccountCtrl.changePassword = async (req, res) =>{    
@@ -135,37 +133,36 @@ AccountCtrl.modifyAccountInformation = async (req, res) =>{
 
 function areAllValuesRight(req) {
     if (req.body.password === null || 
-        typeof req.body.password !== 'String') {
+        typeof req.body.password !== 'string') {
         return false;
     }
     if (req.body.birthday === null || 
-        typeof req.body.birthday !== 'String') {
+        typeof req.body.birthday !== 'string') {
         return false;
     }
     if (req.body.age === null || 
-        isNan(req.body.age) ||
         parseInt(req.body.age) > 150 ||
         parseInt(req.body.age) < 13 ) {
         return false;
     }
     if (req.body.city === null || 
-        typeof req.body.city !== 'String') {
+        typeof req.body.city !== 'string') {
         return false;
     }
     if (req.body.countryResidence === null || 
-        typeof req.body.countryResidence !== 'String') {
+        typeof req.body.countryResidence !== 'string') {
         return false;
     }
     if (req.body.gender === null || 
-        typeof req.body.gender !== 'String') {
+        typeof req.body.gender !== 'string') {
         return false;
     }
     if (req.body.securityQuestion === null || 
-        typeof req.body.securityQuestion !== 'String') {
+        typeof req.body.securityQuestion !== 'string') {
         return false;
     }
     if (req.body.securityAnswer === null || 
-        typeof req.body.securityAnswer !== 'String') {
+        typeof req.body.securityAnswer !== 'string') {
         return false;
     }
     return true;
