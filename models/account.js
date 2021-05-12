@@ -3,7 +3,7 @@ const {Schema} = mongoose;
 const accountSchema = new Schema({
     username:{type: String, require :true, inmutable : true},
     password:{type: String, require :true},
-    birthday:{type: String, require: true}, // DD/MM/YYYY 
+    birthday:{type: String, require: true}, // YYYY-dd-mmT04:00:00.00Z 
     age:{type: Number, min:13, max:150},
     city:{type: String, require :true},
     countryResidence:{type: String, require :true},

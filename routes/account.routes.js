@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const AccountCtrl = require('../controllers/account.controllers');
 
-router.get('/Accounts', AccountCtrl.getAccounts); //For Testing Purposes, Must erase before launch
 router.get('/Check-Account-Existence', AccountCtrl.isAccountExistent);
 router.get('/Sign-In', AccountCtrl.isSignInAllowed, 
                         AccountCtrl.checkWhichDataIsWrong);

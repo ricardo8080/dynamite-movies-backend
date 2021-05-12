@@ -1,11 +1,7 @@
 const AccountCtrl = {};
 const Account = require('../models/account');
 
-AccountCtrl.getAccounts = async (req,res) => {
-    //console.log(req.header('username') + typeof (req.header('username')) );
-    const Accounts = await Account.find();
-    res.json(Accounts);
-};
+
 AccountCtrl.isAccountExistent = async (req,res) => {
     const SearchedAccount = await Account.find(
         { "username": req.header('username') });
@@ -40,20 +36,14 @@ AccountCtrl.checkWhichDataIsWrong = async (req,res) => {
     }
 };
 AccountCtrl.getLastSeenMovies = async (req,res) => {
-    const loggedAccount = await Account.find({ "username" : req.header('username') });
-    console.log(loggedAccount.lastMoviesSeenList);
-    if (loggedAccount.lastMoviesSeenList === null || 
+    const loggedAccount = await Account.find({ "username" : req.header('username') });    if (loggedAccount.lastMoviesSeenList === null || 
         typeof loggedAccount.lastMoviesSeenList === 'undefined')
     {
-        res.json(["None"])
+        res.json(["None"]);
     } else {
         res.json(loggedAccount.lastMoviesSeenList);
     }
 };
-
-AccountCtrl.isAccountAlreadyUsed = async (req,res,next) => {
-};
-
 AccountCtrl.createAccount = async (req,res) => {
     const username = req.body.username;
     const password = req.body.password;
@@ -80,25 +70,23 @@ AccountCtrl.createAccount = async (req,res) => {
         securityQuestion,
         securityAnswer
     });
-    //console.log(req.body);
-    /*const SearchedAccount = await Account.find({ "username": req.header('username') });
-    console.log(SearchedAccount);
+    const SearchedAccount = await Account.find({ "username": username });
     if (SearchedAccount.length > 0)
     {   
         res.json({ "response" : "Already Existent Account" });
     } 
-    else*/ {   
-        
+    else if (areAllValuesRight(req)){   
         try {
             await AccountObj.save();
             res.json({ "response" : "Succesful account Creation" });
         } catch (error) {
             res.json({ "error: " : error});
         }
+    } else {
+        res.json({ "error: " : "Age must be >13 <150, or missing data"});
     }
 };
-AccountCtrl.changePassword = async (req, res) =>{
-    
+AccountCtrl.changePassword = async (req, res) =>{    
     await Account.findOneAndUpdate(
           { "username" : req.body.username,
             "securityQuestion" : req.body.securityQuestion ,
@@ -106,16 +94,12 @@ AccountCtrl.changePassword = async (req, res) =>{
         , { "password" :  req.body.newPassword }
         )
         .then( () => {
-            console.log({ "username" : req.body.username,
-            "securityQuestion" : req.body.securityQuestion ,
-            "securityAnswer" : req.body.securityAnswer });
             res.json({ "response" : "Succesfully changed Password" });
         })
         .catch( () => {
             res.json({ "response" : error});
         });
 };
-
 AccountCtrl.changeMoviesSeen = async (req, res) =>{
     await Account.findOneAndUpdate ( 
           { "username" : req.body.username }
@@ -137,7 +121,9 @@ AccountCtrl.modifyAccountInformation = async (req, res) =>{
            "city": req.body.city,
            "countryResidence": req.body.countryResidence,
            "gender": req.body.gender,
-           "accountPicture": req.body.accountPicture
+           "accountPicture": req.body.accountPicture,
+           "securityQuestion": req.body.securityQuestion,
+           "securityAnswer": req.body.securityAnswer
         })
         .then( () => {
             res.json({"response":"Succesfully changed Profile"});
@@ -146,5 +132,43 @@ AccountCtrl.modifyAccountInformation = async (req, res) =>{
             res.json({"response":error});
         });
 };
+
+function areAllValuesRight(req) {
+    if (req.body.password === null || 
+        typeof req.body.password !== 'String') {
+        return false;
+    }
+    if (req.body.birthday === null || 
+        typeof req.body.birthday !== 'String') {
+        return false;
+    }
+    if (req.body.age === null || 
+        isNan(req.body.age) ||
+        parseInt(req.body.age) > 150 ||
+        parseInt(req.body.age) < 13 ) {
+        return false;
+    }
+    if (req.body.city === null || 
+        typeof req.body.city !== 'String') {
+        return false;
+    }
+    if (req.body.countryResidence === null || 
+        typeof req.body.countryResidence !== 'String') {
+        return false;
+    }
+    if (req.body.gender === null || 
+        typeof req.body.gender !== 'String') {
+        return false;
+    }
+    if (req.body.securityQuestion === null || 
+        typeof req.body.securityQuestion !== 'String') {
+        return false;
+    }
+    if (req.body.securityAnswer === null || 
+        typeof req.body.securityAnswer !== 'String') {
+        return false;
+    }
+    return true;
+}
 
 module.exports = AccountCtrl;
