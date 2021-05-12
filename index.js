@@ -7,7 +7,6 @@ const app = express();
 require('./database');
 
 //Settings
-app.use(cors());
 app.use(bodyparser.urlencoded({ extended: false }));
 app.use(bodyparser.json());
 app.use(cors());
