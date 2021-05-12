@@ -56,7 +56,7 @@ AccountCtrl.createAccount = async (req,res) => {
     const lastMoviesSeenList = null;
     const securityQuestion = req.body.securityQuestion;
     const securityAnswer = req.body.securityAnswer;
-
+    const email = req.body.email;
     const AccountObj = new Account ({  
         username ,
         password ,
@@ -68,7 +68,8 @@ AccountCtrl.createAccount = async (req,res) => {
         accountPicture ,
         lastMoviesSeenList,
         securityQuestion,
-        securityAnswer
+        securityAnswer,
+        email
     });
     console.log(AccountObj);
     const SearchedAccount = await Account.find({ "username": username });
@@ -121,7 +122,8 @@ AccountCtrl.modifyAccountInformation = async (req, res) =>{
            "gender": req.body.gender,
            "accountPicture": req.body.accountPicture,
            "securityQuestion": req.body.securityQuestion,
-           "securityAnswer": req.body.securityAnswer
+           "securityAnswer": req.body.securityAnswer,
+           "email": req.body.email
         })
         .then( () => {
             res.json({"response":"Succesfully changed Profile"});

@@ -11,7 +11,8 @@ const accountSchema = new Schema({
     accountPicture:{type: String},
     lastMoviesSeenList:{type: [Schema.ObjectId], require :false},
     securityQuestion: {type: String, require: true},
-    securityAnswer: {type: String, require: true}
+    securityAnswer: {type: String, require: true},
+    email: {type: String, require: true}
 });
 
 module.exports = mongoose.model('dynamite_accounts', accountSchema);
