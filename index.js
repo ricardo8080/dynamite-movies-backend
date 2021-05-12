@@ -7,6 +7,7 @@ const app = express();
 require('./database');
 
 //Settings
+app.use(cors());
 app.use(bodyparser.urlencoded({ extended: false }));
 app.use(bodyparser.json());
 app.use(cors());
@@ -18,5 +19,5 @@ app.use('/movie/',require('./routes/movie.routes'));
 app.use('/account/',require('./routes/account.routes'));
 
 app.listen(app.get('Port'), ()=>{
-    console.log('Express server on port 5000')
+    console.log('Express server on port 5000');
 });
