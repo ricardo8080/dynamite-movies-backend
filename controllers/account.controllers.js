@@ -26,9 +26,7 @@ AccountCtrl.isSignInAllowed = async (req,res,next) => {
     {   
         next();
     } else {
-        res.json({ "response" : "True" },
-                 {"Account": loggedAccount}
-                 );
+        res.json({ "response" : "True" });
     }
 };
 AccountCtrl.checkWhichDataIsWrong = async (req,res) => {
@@ -69,7 +67,8 @@ AccountCtrl.createAccount = async (req,res) => {
     const securityQuestion = req.body.securityQuestion;
     const securityAnswer = req.body.securityAnswer;
 
-    const AccountObj = new Account ({  username ,
+    const AccountObj = new Account ({  
+        username ,
         password ,
         birthday ,
         age ,
@@ -81,14 +80,14 @@ AccountCtrl.createAccount = async (req,res) => {
         securityQuestion,
         securityAnswer
     });
-    const SearchedAccount = await Account
-                            .find({ "username": req.header('username') });
+    //console.log(req.body);
+    /*const SearchedAccount = await Account.find({ "username": req.header('username') });
     console.log(SearchedAccount);
     if (SearchedAccount.length > 0)
     {   
         res.json({ "response" : "Already Existent Account" });
     } 
-    else {   
+    else*/ {   
         
         try {
             await AccountObj.save();

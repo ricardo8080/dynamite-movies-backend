@@ -9,6 +9,7 @@ require('./database');
 //Settings
 app.use(bodyparser.urlencoded({ extended: false }));
 app.use(bodyparser.json());
+app.use(cors());
 
 app.set('Port', process.env.PORT || 5000);
 
