@@ -18,5 +18,5 @@ app.use('/movie/',require('./routes/movie.routes'));
 app.use('/account/',require('./routes/account.routes'));
 
 app.listen(app.get('Port'), ()=>{
-    console.log('Express server on port 5000')
+    console.log('Express server on port 5000');
 });

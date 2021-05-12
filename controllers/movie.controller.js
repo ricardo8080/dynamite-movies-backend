@@ -13,11 +13,13 @@ MovieCtrl.getMovieTrends = async (req,res) => {
     res.json(Movies);
 };
 
-MovieCtrl.getSearchMovieList = async (req,res) => {
+MovieCtrl.getAllMovies = async (req, res) => {
     let Movies = await Movie.find();
-    Movies.filter((item) => 
-        item.nameMovie.includes(req.header('nameMovie'))
-    );
+    res.json(Movies);
+};
+
+MovieCtrl.getSearchMovieList = async (req, res) => {
+    let Movies = await Movie.find({"nameMovie": req.header('nameMovie')});
     res.json(Movies);
 };
 
