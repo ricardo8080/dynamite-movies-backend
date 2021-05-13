@@ -5,7 +5,7 @@ MovieCtrl.getMovieTrends = async (req,res) => {
     let Movies = await Movie.find();
     const quantityOfMovies =  req.header('quantityOfMovies');
     if (Movies.length >= quantityOfMovies) {
-        Movies = Movies.sort((a,b) => (b.searchedTimes)-(a.searchedTimes)).slice(0,quantityOfMovies-1);
+        Movies = Movies.sort((a,b) => (b.searchedTimes)-(a.searchedTimes)).slice(0,quantityOfMovies);
     } else if(Movies.length > 0) { 
         Movies = movies.sort((a,b) => (b.searchedTimes)-(a.searchedTimes));
     } 
