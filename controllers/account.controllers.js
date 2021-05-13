@@ -115,11 +115,8 @@ AccountCtrl.changeMoviesSeen = async (req, res) =>{
 
     if (accountToChange !== null || 
         accountToChange !== undefined) {
-        let temp = []
-        if (accountToChange[0].lastMoviesSeenList !== null || 
-            accountToChange[0].lastMoviesSeenList !== undefined ) {
-            temp = accountToChange[0].lastMoviesSeenList;
-        }
+            
+        let temp =  accountToChange[0].lastMoviesSeenList;
 
         if(accountToChange[0].lastMoviesSeenList.includes("")) {
             temp.shift();
