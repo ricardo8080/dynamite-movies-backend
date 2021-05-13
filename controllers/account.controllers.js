@@ -90,14 +90,14 @@ AccountCtrl.changePassword = async (req, res) =>{
           { "username" : req.body.username,
             "securityQuestion" : req.body.securityQuestion ,
             "securityAnswer" : req.body.securityAnswer }
-        , { "password" :  req.body.newPassword }
-        )
-        .then( () => {
-            res.json({ "response" : "Succesfully changed Password" });
-        })
-        .catch( () => {
-            res.json({ "response" : error});
-        });
+        , { "password" :  req.body.newPassword}, function (err, result) {
+            if (err) 
+            {
+                res.send(err);
+            } else {
+                res.send(result);
+            }
+         });
 };
 AccountCtrl.changeMoviesSeen = async (req, res) =>{
     await Account.findOneAndUpdate ( 
