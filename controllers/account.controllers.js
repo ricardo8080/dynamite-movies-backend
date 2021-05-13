@@ -14,6 +14,11 @@ AccountCtrl.isAccountExistent = async (req,res) => {
     }
 };
 
+AccountCtrl.getAccountInformation = async (req,res) => {
+    const SearchedAccount = await Account.find({ "username": req.header('username') });
+    res.json(SearchedAccount);
+};
+
 AccountCtrl.isSignInAllowed = async (req,res,next) => {
     const loggedAccount = await Account.find( 
         { "username" : req.header('username') ,
@@ -90,14 +95,14 @@ AccountCtrl.changePassword = async (req, res) =>{
           { "username" : req.body.username,
             "securityQuestion" : req.body.securityQuestion ,
             "securityAnswer" : req.body.securityAnswer }
-        , { "password" :  req.body.newPassword }
-        )
-        .then( () => {
-            res.json({ "response" : "Succesfully changed Password" });
-        })
-        .catch( () => {
-            res.json({ "response" : error});
-        });
+        , { "password" :  req.body.newPassword}, function (err, result) {
+            if (err) 
+            {
+                res.send(err);
+            } else {
+                res.send(result);
+            }
+         });
 };
 AccountCtrl.changeMoviesSeen = async (req, res) =>{
     await Account.findOneAndUpdate ( 

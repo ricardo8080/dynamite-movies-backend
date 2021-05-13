@@ -10,5 +10,6 @@ router.post('/Register', AccountCtrl.createAccount);
 router.put('/Forgot-Password', AccountCtrl.changePassword);
 router.put('/Change-Last-Seen', AccountCtrl.changeMoviesSeen);
 router.put('/Edit-Account', AccountCtrl.modifyAccountInformation);
+router.get('/account-information',AccountCtrl.getAccountInformation);
 
 module.exports = router;
