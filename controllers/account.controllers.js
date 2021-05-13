@@ -14,6 +14,11 @@ AccountCtrl.isAccountExistent = async (req,res) => {
     }
 };
 
+AccountCtrl.getAccountInformation = async (req,res) => {
+    const SearchedAccount = await Account.find({ "username": req.header('username') });
+    res.json(SearchedAccount);
+};
+
 AccountCtrl.isSignInAllowed = async (req,res,next) => {
     const loggedAccount = await Account.find( 
         { "username" : req.header('username') ,

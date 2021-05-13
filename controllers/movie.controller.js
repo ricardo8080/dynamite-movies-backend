@@ -3,7 +3,6 @@ const Movie = require('../models/movie');
 
 MovieCtrl.getMovieTrends = async (req,res) => {
     let Movies = await Movie.find();
-    //const quantityOfMovies = req.body.quantityRequested;
     const quantityOfMovies =  req.header('quantityOfMovies');
     if (Movies.length >= quantityOfMovies) {
         Movies = Movies.sort((a,b) => (b.searchedTimes)-(a.searchedTimes)).slice(0,quantityOfMovies-1);
@@ -24,27 +23,29 @@ MovieCtrl.getSearchMovieList = async (req, res) => {
 };
 
 MovieCtrl.getSearchFliteredMovieList = async (req,res) => {
+    console.log(req.header('genres')+ typeof(req.header('genres')));
     let Movies = await Movie.find();
-    Movies.filter((item) => 
-        item.nameMovie.includes(req.header('nameMovie')))
-        .filter((item) => 
-        item.country === req.header('country'))
-        .filter((item) => {
+    Movies = Movies.filter((item) => {
+            return item.nameMovie.includes(req.header('nameMovie'))
+        }).filter((item) => {
+            return item.country === req.header('country') || 
+                   req.header('country') === undefined
+        }).filter((item) => {
             const gendersRequested = req.header('genres');
-            let hasGenders = True;
-            gendersRequested.forEach(element => {
-                if(!item.genres.includes(element)) {
-                    hasGenders = false;
-                }
-            });
-            return hasGenders;
+            let hasGenders = true;
+            if(req.header('genres') === undefined){
+                return true;
+            } else {
+                const genderSplit = gendersRequested.split(",");
+                console.log(genderSplit);
+                genderSplit.forEach(element => {
+                    if(!item.genres.includes(element)) {
+                        hasGenders = false;
+                    }
+                });
+                return (hasGenders);
+            }
         })
-        .filter((item) => 
-        !(typeof req.header('dateFrom') === 'undefined') &&
-        !(typeof req.header('dateTo') === 'undefined') &&
-        item.releaseDate >= req.header('dateFrom') &&
-        item.releaseDate <= req.header('dateTo')
-    )
     res.json(Movies);
 };
 
@@ -63,3 +64,23 @@ MovieCtrl.addMovieSearchCount = async (req,res) => {
 };
 
 module.exports = MovieCtrl;
+
+/*
+    .filter((item) => {
+        console.log("Searching for dateFrom dateTo");
+        console.log(((req.header('dateFrom') === undefined) ||
+                    (req.header('dateTo') === undefined)));
+
+        console.log((item.releaseDate >= req.header('dateFrom') ||
+                    item.releaseDate <= req.header('dateTo')));
+    
+        if(((req.header('dateFrom') === undefined) ||
+            (req.header('dateTo') === undefined))) {
+            return true;
+        }
+
+        return (
+            ((item.releaseDate >= req.header('dateFrom') ||
+            item.releaseDate <= req.header('dateTo'))))
+    })
+*/
