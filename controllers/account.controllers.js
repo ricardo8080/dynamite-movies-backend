@@ -1,12 +1,6 @@
 const AccountCtrl = {};
 const Account = require('../models/account');
 
-/*
-    Only to send directly the last seen movies of one person
-*/
-const MovieCtrl = {};
-const Movie = require('../models/movie');
-
 AccountCtrl.isAccountExistent = async (req,res) => {
     const SearchedAccount = await Account.find(
         { "username": req.header('username') });
@@ -44,14 +38,15 @@ AccountCtrl.checkWhichDataIsWrong = async (req,res) => {
     }
 };
 AccountCtrl.getLastSeenMovies = async (req,res) => {
-    const loggedAccount = await Account.find({ "username" : req.header('username') });    
-    if (loggedAccount.lastMoviesSeenList === null || 
-         loggedAccount.lastMoviesSeenList === undefined)
+    const loggedAccounts = await Account.find({ "username" : req.header('username') });    
+    if ( loggedAccounts === null || 
+         loggedAccounts === undefined  )
     {
-
-        res.json(["None"]);
+        res.json([""]);
     } else {
-        res.json(loggedAccount.lastMoviesSeenList);
+        console.log("...")
+        let listOfMovies = loggedAccounts[0].lastMoviesSeenList;
+        res.json(listOfMovies);
     }
 };
 
@@ -65,7 +60,7 @@ AccountCtrl.createAccount = async (req,res) => {
     const countryResidence = req.body.countryResidence;
     const gender = req.body.gender;
     const accountPicture = req.body.accountPicture;
-    const lastMoviesSeenList = null;
+    const lastMoviesSeenList = [];
     const securityQuestion = req.body.securityQuestion;
     const securityAnswer = req.body.securityAnswer;
     const email = req.body.email;
@@ -122,10 +117,13 @@ AccountCtrl.changeMoviesSeen = async (req, res) =>{
         accountToChange !== undefined) {
         let temp = []
         if (accountToChange[0].lastMoviesSeenList !== null || 
-            accountToChange[0].lastMoviesSeenList !== undefined) {
-                temp = accountToChange[0].lastMoviesSeenList;
-            }
+            accountToChange[0].lastMoviesSeenList !== undefined ) {
+            temp = accountToChange[0].lastMoviesSeenList;
+        }
 
+        if(accountToChange[0].lastMoviesSeenList.includes("")) {
+            temp.shift();
+        }
         if(!temp.includes(req.header('nameMovie'))) {
             temp.push(req.header('nameMovie'));
         }
