@@ -1,6 +1,12 @@
 const AccountCtrl = {};
 const Account = require('../models/account');
 
+/*
+    Only to send directly the last seen movies of one person
+*/
+const MovieCtrl = {};
+const Movie = require('../models/movie');
+
 AccountCtrl.isAccountExistent = async (req,res) => {
     const SearchedAccount = await Account.find(
         { "username": req.header('username') });
@@ -40,13 +46,16 @@ AccountCtrl.checkWhichDataIsWrong = async (req,res) => {
 AccountCtrl.getLastSeenMovies = async (req,res) => {
     const loggedAccount = await Account.find({ "username" : req.header('username') });    
     if (loggedAccount.lastMoviesSeenList === null || 
-        typeof loggedAccount.lastMoviesSeenList === 'undefined')
+         loggedAccount.lastMoviesSeenList === undefined)
     {
+
         res.json(["None"]);
     } else {
         res.json(loggedAccount.lastMoviesSeenList);
     }
 };
+
+
 AccountCtrl.createAccount = async (req,res) => {
     const username = req.body.username;
     const password = req.body.password;
@@ -111,7 +120,12 @@ AccountCtrl.changeMoviesSeen = async (req, res) =>{
 
     if (accountToChange !== null || 
         accountToChange !== undefined) {
-        let temp = accountToChange[0].lastMoviesSeenList
+        let temp = []
+        if (accountToChange[0].lastMoviesSeenList !== null || 
+            accountToChange[0].lastMoviesSeenList !== undefined) {
+                temp = accountToChange[0].lastMoviesSeenList;
+            }
+
         if(!temp.includes(req.header('nameMovie'))) {
             temp.push(req.header('nameMovie'));
         }
@@ -127,11 +141,11 @@ AccountCtrl.changeMoviesSeen = async (req, res) =>{
             res.json({ "response" : "Succesfully changed movies seen" });
           })
           .catch( () => {
-            res.json({ "esponse" : error });
+            res.json({ "response" : error });
           });
 
     } else {
-        res.json({ "esponse" : "The username does not exist" });
+        res.json({ "response" : "The username does not exist" });
     }
     
 };
