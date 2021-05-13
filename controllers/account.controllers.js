@@ -111,11 +111,16 @@ AccountCtrl.changeMoviesSeen = async (req, res) =>{
 
     if (accountToChange !== null || 
         accountToChange !== undefined) {
-        const accountUserName = accountToChange[0]
-        const temp = accountUserName.lastMoviesSeenList.concat([req.header('nameMovie')]);
+        let temp = accountToChange[0].lastMoviesSeenList
+        if(!temp.includes(req.header('nameMovie'))) {
+            temp.push(req.header('nameMovie'));
+        }
         console.log(temp);
+        while(temp.length > 5) {
+            temp.shift();
+        }
         await Account.findOneAndUpdate ( 
-              { "username" : req.body.username }
+              { "username" : accountToChange[0].username }
              ,{ "lastMoviesSeenList" : temp }
              )
           .then( () => {
