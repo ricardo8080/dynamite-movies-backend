@@ -9,7 +9,7 @@ const accountSchema = new Schema({
     countryResidence:{type: String, require :true},
     gender:{type: String, require :true},
     accountPicture:{type: String},
-    lastMoviesSeenList:{type: [Schema.ObjectId], require :false},
+    lastMoviesSeenList:{type: [String], require :false},
     securityQuestion: {type: String, require: true},
     securityAnswer: {type: String, require: true},
     email: {type: String, require: true}

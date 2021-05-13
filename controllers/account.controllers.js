@@ -1,7 +1,6 @@
 const AccountCtrl = {};
 const Account = require('../models/account');
 
-
 AccountCtrl.isAccountExistent = async (req,res) => {
     const SearchedAccount = await Account.find(
         { "username": req.header('username') });
@@ -13,12 +12,10 @@ AccountCtrl.isAccountExistent = async (req,res) => {
         res.json({ "response" : "False" });
     }
 };
-
 AccountCtrl.getAccountInformation = async (req,res) => {
     const SearchedAccount = await Account.find({ "username": req.header('username') });
     res.json(SearchedAccount);
 };
-
 AccountCtrl.isSignInAllowed = async (req,res,next) => {
     const loggedAccount = await Account.find( 
         { "username" : req.header('username') ,
@@ -41,7 +38,8 @@ AccountCtrl.checkWhichDataIsWrong = async (req,res) => {
     }
 };
 AccountCtrl.getLastSeenMovies = async (req,res) => {
-    const loggedAccount = await Account.find({ "username" : req.header('username') });    if (loggedAccount.lastMoviesSeenList === null || 
+    const loggedAccount = await Account.find({ "username" : req.header('username') });    
+    if (loggedAccount.lastMoviesSeenList === null || 
         typeof loggedAccount.lastMoviesSeenList === 'undefined')
     {
         res.json(["None"]);
@@ -105,18 +103,33 @@ AccountCtrl.changePassword = async (req, res) =>{
          });
 };
 AccountCtrl.changeMoviesSeen = async (req, res) =>{
-    await Account.findOneAndUpdate ( 
-          { "username" : req.body.username }
-         ,{ "lastMoviesSeenList" : req.body.lastMoviesSeenList }
-         )
-      .then( () => {
-        res.json({ "response" : "Succesfully changed movies seen" });
-      })
-      .catch( () => {
-        res.json({ "esponse" : error });
-      });
-};
 
+    const accountToChange = await Account.find( 
+        { "username" : req.header('username') }
+    );
+    console.log(accountToChange);
+
+    if (accountToChange !== null || 
+        accountToChange !== undefined) {
+        const accountUserName = accountToChange[0]
+        const temp = accountUserName.lastMoviesSeenList.concat([req.header('nameMovie')]);
+        console.log(temp);
+        await Account.findOneAndUpdate ( 
+              { "username" : req.body.username }
+             ,{ "lastMoviesSeenList" : temp }
+             )
+          .then( () => {
+            res.json({ "response" : "Succesfully changed movies seen" });
+          })
+          .catch( () => {
+            res.json({ "esponse" : error });
+          });
+
+    } else {
+        res.json({ "esponse" : "The username does not exist" });
+    }
+    
+};
 AccountCtrl.modifyAccountInformation = async (req, res) =>{
     await Account.findOneAndUpdate(
         { "username" : req.body.username }
